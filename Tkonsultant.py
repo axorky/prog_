@@ -1,5 +1,30 @@
 from tkinter import *
 
+def show_recommendation_btn():
+    global recommend_btn, change_entry, confirm_btn, mean_entry, feedback_btn, start_over_btn
+    budget_entry.delete(0, END)
+    purpose_entry.delete(0, END)
+    brand_entry.delete(0, END)
+    text_area.delete(1.0, END)
+    text_area.insert(END, 
+    "Добрый день! Сегодня я ваш консультант по выбору смартфона!\n")
+    if 'change_entry' in globals():
+        change_entry.destroy()
+    if 'confirm_btn' in globals():
+        confirm_btn.destroy()
+    if 'mean_entry' in globals():
+        mean_entry.destroy()
+    if 'feedback_btn' in globals():
+        feedback_btn.destroy()
+    if 'start_over_btn' in globals():
+        start_over_btn.destroy()
+    recommend_btn.pack()
+
+def on_click():
+    global recommend_btn
+    get_recommendation()
+    recommend_btn.pack_forget()
+
 def get_recommendation():
     b_input = budget_entry.get()
     b = 0
@@ -95,32 +120,43 @@ def get_recommendation():
             elif purp == 2:
                 text_area.insert(END, "Рекомендуем: Google Pixel 9\nЦена: около 57500 р.\nПочему?: Чёткий OLED-дисплей, Ёмкость аккумулятора 4700 мА/ч\n")
             else:
-                text_area.insert(END, "Рекомендуем: Huawei Mate 70 Pro\nЦена: около 64900 р.\nПочему?: Новый дизайн, встроенный ИИ-помощник, 6.9 диагональ\n")
+                text_area.insert(END, "Рекомендуем: Huawei Mate 70 Pro\nЦена: около 64900 р.\nПочему?: Новый дизайн, встроенный ИИ-пощник, 6.9 диагональ\n")
 
     text_area.insert(END, "-"*30 + "\n")
     text_area.insert(END, "Хотите изменить ввод? (да/нет):\n")
     global change_entry
     change_entry = Entry(root)
     change_entry.pack()
-    Button(root, text="Подтвердить", command=confirm_change).pack()
+    global confirm_btn
+    confirm_btn = Button(root, text="Подтвердить", command=confirm_change)
+    confirm_btn.pack()
 
 def confirm_change():
     change = change_entry.get().lower()
+    change_entry.destroy()
+    confirm_btn.destroy()
     if change == "да" or change == "yes":
-        text_area.insert(END, "-"*30 + "\nПерезапустите программу для нового ввода.\n")
+        show_recommendation_btn()
     else:
         text_area.insert(END, "Вас всё устроило в нашем обслуживании?:\n")
         global mean_entry
         mean_entry = Entry(root)
         mean_entry.pack()
-        Button(root, text="Отправить отзыв", command=send_feedback).pack()
+        global feedback_btn
+        feedback_btn = Button(root, text="Отправить отзыв", command=send_feedback)
+        feedback_btn.pack()
 
 def send_feedback():
+    global start_over_btn
     mean = mean_entry.get().lower()
+    mean_entry.destroy()
+    feedback_btn.destroy()
     if mean == "да" or mean == "yes":
-        text_area.insert(END, "-"*30 + "\nСпасибо за использование нашего консультанта!\nУдачных покупок!\n")
+        text_area.insert(END, "-"*30 + "\nСпасибо за использование нашего консультанта!\n")
     else:
-        text_area.insert(END, "-"*30 + "\nМы учтём ваше мнение, спасибо за отзыв!\nУдачных покупок!\n")
+        text_area.insert(END, "-"*30 + "\nМы учтём ваше мнение, спасибо за отзыв!\n")
+    start_over_btn = Button(root, text="Начать заново", command=show_recommendation_btn)
+    start_over_btn.pack()
 
 root = Tk()
 root.title("Консультант по смартфонам")
@@ -148,6 +184,9 @@ brand_entry.pack()
 text_area = Text(root, height=20, width=80)
 text_area.pack()
 
-Button(root, text="Получить рекомендацию", command=get_recommendation).pack()
+global recommend_btn
+recommend_btn = Button(root, text="Получить рекомендацию", command=on_click)
+recommend_btn.pack()
 
 root.mainloop()
+
